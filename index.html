@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        table {
+            border: 1px solid #49aae6;
+            margin: 45px;
+        }
+
+        .table-wrapper {
+            position: relative;
+        }
+
+        td {
+            height: 40px;
+            width: 40px;
+            background-color: #49aae6;
+        }
+
+        .table-control {
+            height: 40px;
+            width: 40px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            transition: all .2s ease-in;
+        }
+
+        .table-control:hover {
+            cursor: pointer;
+            filter: brightness(110%);
+        }
+
+        .add-control {
+            background-color: #f3a500;
+        }
+
+        .remove-control {
+            background-color: #b20000;
+        }
+    </style>
+
+</head>
+
+<body>
+    <table>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+<script src="main.js" type="module"></script>
+
+</html>
