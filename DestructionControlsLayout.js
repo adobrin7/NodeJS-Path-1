@@ -2,6 +2,8 @@ import { ControlsLayout } from "./ControlsLayout.js";
 
 export class DestructionControlsLayout extends ControlsLayout {
     pointerEvent = null;
+    observeAreaCoords = null;
+    tableCoords = null;
     cellUnderPointerCoords = null;
     controlDimensions = null;
 
@@ -9,52 +11,73 @@ export class DestructionControlsLayout extends ControlsLayout {
         super(rowControl, colControl, $table);
     }
 
-    layout() {
-        const onPointerMove = event => {
-            this.tableCoords = this.$table.getBoundingClientRect();
-            this.pointerEvent = event;
-            const shouldHideControls = this.shouldHideControls();
-            if (!shouldHideControls) {
-                this.displayControls();
-                return;
-            }
-            this.hideControls();
-            document.removeEventListener('pointermove', onPointerMove);
-        };
-        document.addEventListener('pointermove', onPointerMove);
-    }
+    layout(event, observeAreaCoords) {
+        this.pointerEvent = event;
+        this.observeAreaCoords = observeAreaCoords;
+        this.tableCoords = this.$table.getBoundingClientRect();
 
-    shouldHideControls() {
-        return this.isPointerOutOfTable() &&
-            this.pointerEvent.target !== this.colControl.$control &&
-            this.pointerEvent.target !== this.rowControl.$control
-    }
-
-    isPointerOutOfTable() {
-        const tableExtraArea = this.clientOffset * 2;
-        const tableInteractiveArea = {
-            left: this.tableCoords.left - tableExtraArea,
-            top: this.tableCoords.top - tableExtraArea,
-            right: this.tableCoords.right + tableExtraArea,
-            bottom: this.tableCoords.bottom + tableExtraArea
-        };
-
-        return this.pointerEvent.pageX < tableInteractiveArea.left ||
-            this.pointerEvent.pageY < tableInteractiveArea.top ||
-            this.pointerEvent.pageX > tableInteractiveArea.right ||
-            this.pointerEvent.pageY > tableInteractiveArea.bottom
-    }
-
-    displayControls() {
-        if (this.pointerEvent.target.tagName !== 'TD') {
+        if (this.isPointerOnTable()) {
+            this.layoutInTableCoords(event);
             return;
         }
+
+        this.layoutInAreaCoords();
+    }
+
+    isPointerOnTable() {
+        return this.pointerEvent.pageX > this.tableCoords.left &&
+            this.pointerEvent.pageY > this.tableCoords.top &&
+            this.pointerEvent.pageX < this.tableCoords.right &&
+            this.pointerEvent.pageY < this.tableCoords.bottom;
+    }
+
+    getPointerClosestCell() {
+        const tableOffset = Math.abs(this.tableCoords.left - this.observeAreaCoords.left);
+        
+        const isPointerOnLeftOrRight = (this.pointerEvent.pageX < this.tableCoords.left) ||
+            (this.pointerEvent.pageX > this.tableCoords.right);
+        const isPointerOnTopOrBottom = (this.pointerEvent.pageY < this.tableCoords.top) ||
+            (this.pointerEvent.pageY > this.tableCoords.bottom);
+
+        const $closestCell = document.elementFromPoint(
+            this.pointerEvent.pageX + (isPointerOnLeftOrRight ? tableOffset : 0),
+            this.pointerEvent.pageY + (isPointerOnTopOrBottom ? tableOffset : 0), 
+        );
+
+        const $closestCell2 = document.elementFromPoint(
+            this.pointerEvent.pageX - (isPointerOnLeftOrRight ? tableOffset : 0),
+            this.pointerEvent.pageY - (isPointerOnTopOrBottom ? tableOffset : 0), 
+        );
+
+        return $closestCell.tagName === 'TD' ? $closestCell : $closestCell2;
+    }
+
+    layoutInTableCoords(event) {
+        if (event.target.tagName !== 'TD') {    
+            return;
+        }
+
+        this.tableCoords = this.$table.getBoundingClientRect();
         this.showControls();
-        this.cellUnderPointerCoords = this.pointerEvent.target.getBoundingClientRect();
+        this.cellUnderPointerCoords = event.target.getBoundingClientRect();
         this.controlDimensions = Math.max(
             this.rowControl.calcDimensions(),
             this.colControl.calcDimensions()
         );
+        this.renderControls();
+    }
+
+    layoutInAreaCoords() {
+        const closestCell = this.getPointerClosestCell();
+        if (closestCell?.tagName !== 'TD') {
+            return;
+        }
+        this.cellUnderPointerCoords = closestCell.getBoundingClientRect();
+        this.controlDimensions = Math.max(
+            this.rowControl.calcDimensions(),
+            this.colControl.calcDimensions()
+        );
+        this.showControls();
         this.renderControls();
     }
 

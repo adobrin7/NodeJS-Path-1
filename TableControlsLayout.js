@@ -49,8 +49,8 @@ export class TableControlsLayout {
         this.removeColControl.hide();
     }
 
-    layoutDestructionControls() {
-        this.destructionControlsLayout.layout();
+    layoutDestructionControls(event, observeAreaCoords) {
+        this.destructionControlsLayout.layout(event, observeAreaCoords);
     }
 
     layoutCreationControls() {
