@@ -1,30 +1,45 @@
 export class TableObserver {
     $table = null;
     controlsLayout = null;
-    observeAreaCoords = null;
+    observeAreaOffset = null;
 
     mutationObserver = null;
 
-    constructor($table, controlsLayout, observeAreaCoords) {
+    observeAreaCoords = null;
+
+    constructor($table, controlsLayout, observeAreaOffset) {
         this.$table = $table;
         this.controlsLayout = controlsLayout;
-        this.observeAreaCoords = observeAreaCoords;
-
-        this.controlsLayout.layoutCreationControls();
+        this.observeAreaOffset = observeAreaOffset;
 
         this.mutationObserver = new MutationObserver(() => this.onStructureChanged());
         this.mutationObserver.observe(this.$table, { childList: true, subtree: true });
+
+        this.calcObserveArea();
 
         document.addEventListener(
             'pointermove',
             event => {
                 if (!this.isPointerInObserveArea(event)) {
                     this.controlsLayout.hideDestructionControls();
+                    this.controlsLayout.hideCreationControls();
                     return;
                 }
-                this.controlsLayout.layoutDestructionControls(event, observeAreaCoords);
+                this.calcObserveArea();
+                this.controlsLayout.layoutDestructionControls(event, this.observeAreaCoords);
+                this.controlsLayout.layoutCreationControls(event, this.observeAreaCoords);
             }
         );
+    }
+
+    calcObserveArea() {
+        const tableCoords = this.$table.getBoundingClientRect();
+        this.observeAreaCoords = {
+            top: tableCoords.top - this.observeAreaOffset,
+            left: tableCoords.left - this.observeAreaOffset,
+            right: tableCoords.right + this.observeAreaOffset,
+            bottom: tableCoords.bottom + this.observeAreaOffset,
+        };
     }
 
     isPointerInObserveArea(pointer) {
@@ -35,7 +50,7 @@ export class TableObserver {
     }
 
     onStructureChanged() {
-        this.controlsLayout.layoutCreationControls();
+        this.controlsLayout.hideCreationControls();
         this.controlsLayout.hideDestructionControls();
     }
 }

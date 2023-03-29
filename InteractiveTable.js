@@ -19,14 +19,9 @@ export class InteractiveTable {
             table.$table
         );
 
-        const tableCoords = table.$table.getBoundingClientRect();
-        this.interactiveArea = {
-            top: tableCoords.top - interactiveAreaOffset,
-            left: tableCoords.left - interactiveAreaOffset,
-            right: tableCoords.right + interactiveAreaOffset,
-            bottom: tableCoords.bottom + interactiveAreaOffset,
-        };
+        tableControlsLayout.hideDestructionControls();
+        tableControlsLayout.hideCreationControls();
 
-        new TableObserver(table.$table, tableControlsLayout, this.interactiveArea);
+        new TableObserver(table.$table, tableControlsLayout, interactiveAreaOffset);
     }
 }

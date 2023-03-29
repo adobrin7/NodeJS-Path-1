@@ -27,7 +27,6 @@ export class TableControlsLayout {
         this.$table = $table;
 
         this.initControlsLayout();
-        this.destructionControlsLayout.hideControls();
     }
 
     initControlsLayout() {
@@ -49,11 +48,16 @@ export class TableControlsLayout {
         this.removeColControl.hide();
     }
 
+    hideCreationControls() {
+        this.addRowControl.hide();
+        this.addColControl.hide();
+    }
+
     layoutDestructionControls(event, observeAreaCoords) {
         this.destructionControlsLayout.layout(event, observeAreaCoords);
     }
 
-    layoutCreationControls() {
-        this.creationControlsLayout.layout();
+    layoutCreationControls(event, observeAreaCoords) {
+        this.creationControlsLayout.layout(event, observeAreaCoords);
     }
 }
