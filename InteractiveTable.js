@@ -16,7 +16,7 @@ export class InteractiveTable {
             removeRowControl,
             addColControl,
             removeColControl,
-            table.$table
+            table
         );
 
         tableControlsLayout.hideDestructionControls();

@@ -2,6 +2,14 @@ export class Table {
     $table = null;
     rows = null;
 
+    get rowsLength() {
+        return this.rows.length;
+    }
+
+    get colsLength() {
+        return this.rows[0].cells.length;
+    }
+
     constructor($table) {
         this.$table = $table;
         this.rows = $table.rows;

@@ -1,14 +1,17 @@
 import { ControlsLayout } from "./ControlsLayout.js";
 
 export class DestructionControlsLayout extends ControlsLayout {
+    table = null;
+
     pointerEvent = null;
     observeAreaCoords = null;
     tableCoords = null;
     cellUnderPointerCoords = null;
     controlDimensions = null;
 
-    constructor(rowControl, colControl, $table) {
+    constructor(rowControl, colControl, $table, table) {
         super(rowControl, colControl, $table);
+        this.table = table;
     }
 
     layout(event, observeAreaCoords) {
@@ -33,7 +36,6 @@ export class DestructionControlsLayout extends ControlsLayout {
 
     getPointerClosestCell() {
         const tableOffset = Math.abs(this.tableCoords.left - this.observeAreaCoords.left) + this.$table.clientLeft * 2;
-        console.log(tableOffset);
         const pointerTriggerRadius = [
             [0, 0],
             [tableOffset, 0],
@@ -88,8 +90,12 @@ export class DestructionControlsLayout extends ControlsLayout {
     }
 
     showControls() {
-        this.rowControl.show();
-        this.colControl.show();
+        if (this.table.rowsLength > 1) {
+            this.rowControl.show();
+        }
+        if(this.table.colsLength > 1) {
+            this.colControl.show();
+        }
     }
 
     hideControls() {
