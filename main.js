@@ -1,6 +1,6 @@
 import { Table } from './Table.js';
 import { InteractiveTable } from './InteractiveTable.js';
 
-const table = new Table(document.querySelector('table'));
+const table = new Table(4, 4, document.querySelector('.table-wrapper'));
 
-new InteractiveTable(table);
+new InteractiveTable(table, 40);

@@ -17,30 +17,31 @@ export class TableControlsLayout {
         removeRowControl,
         addColControl,
         removeColControl,
-        $table
+        table
     ) {
         this.addRowControl = addRowControl;
         this.removeRowControl = removeRowControl;
         this.addColControl = addColControl;
         this.removeColControl = removeColControl;
 
-        this.$table = $table;
+        this.table = table;
 
         this.initControlsLayout();
-        this.destructionControlsLayout.hideControls();
     }
 
     initControlsLayout() {
         this.creationControlsLayout = new CreationControlsLayout(
             this.addRowControl,
             this.addColControl,
-            this.$table
+            this.table.$table,
+            this.table
         );
 
         this.destructionControlsLayout = new DestructionControlsLayout(
             this.removeRowControl,
             this.removeColControl,
-            this.$table
+            this.table.$table,
+            this.table
         );
     }
 
@@ -49,11 +50,16 @@ export class TableControlsLayout {
         this.removeColControl.hide();
     }
 
-    layoutDestructionControls() {
-        this.destructionControlsLayout.layout();
+    hideCreationControls() {
+        this.addRowControl.hide();
+        this.addColControl.hide();
     }
 
-    layoutCreationControls() {
-        this.creationControlsLayout.layout();
+    layoutDestructionControls(event, observeAreaCoords) {
+        this.destructionControlsLayout.layout(event, observeAreaCoords);
+    }
+
+    layoutCreationControls(event, observeAreaCoords) {
+        this.creationControlsLayout.layout(event, observeAreaCoords);
     }
 }

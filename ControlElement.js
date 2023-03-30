@@ -8,7 +8,16 @@ export class ControlElement {
         this.$control.style.position = 'absolute';
         this.$control.innerText = content;
         this.$control.addEventListener('pointerdown', e => e.preventDefault());
-        this.$control.addEventListener('pointerup', action);
+        this.$control.addEventListener('pointerup', e => {
+            action();
+            document.dispatchEvent(new CustomEvent('controlPressed', { 
+                detail: {
+                    pageX: e.pageX, 
+                    pageY: e.pageY, 
+                    target: e.target
+                } 
+            }));
+        });
         document.body.append(this.$control);
     }
 
