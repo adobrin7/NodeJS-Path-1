@@ -51,6 +51,5 @@ export class TableObserver {
 
     onStructureChanged() {
         this.controlsLayout.hideCreationControls();
-        this.controlsLayout.hideDestructionControls();
     }
 }

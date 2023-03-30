@@ -79,10 +79,6 @@ export class CreationControlsLayout extends ControlsLayout {
             return;
         }
         this.cellUnderPointerCoords = closestCell.getBoundingClientRect();
-        this.controlDimensions = Math.max(
-            this.rowControl.calcDimensions(),
-            this.colControl.calcDimensions()
-        );
         this.showControls();
         this.layoutControls();
     }

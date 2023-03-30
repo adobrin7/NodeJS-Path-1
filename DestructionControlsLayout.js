@@ -2,16 +2,38 @@ import { ControlsLayout } from "./ControlsLayout.js";
 
 export class DestructionControlsLayout extends ControlsLayout {
     table = null;
+    controlDimensions = 40;
 
     pointerEvent = null;
     observeAreaCoords = null;
     tableCoords = null;
     cellUnderPointerCoords = null;
-    controlDimensions = null;
 
     constructor(rowControl, colControl, $table, table) {
         super(rowControl, colControl, $table);
         this.table = table;
+        document.addEventListener('controlPressed', pointerCoord => this.onControlPressed(pointerCoord));
+    }
+
+    onControlPressed(pointerCoord) {
+        this.pointerEvent = {
+            pageX: pointerCoord.detail.pageX,
+            pageY: pointerCoord.detail.pageY,
+            target: pointerCoord.detail.target
+        }
+        this.observeAreaCoords = this.observeAreaCoords;
+
+        if (this.pointerEvent.target.classList.contains('add-control')) {
+            this.hideControls();
+            return;
+        }
+        this.layoutInAreaCoords();
+        if (this.table.rowsLength <= 1) {
+            this.rowControl.hide();
+        }
+        if (this.table.colsLength <= 1) {
+            this.colControl.hide();
+        }
     }
 
     layout(event, observeAreaCoords) {
@@ -60,7 +82,7 @@ export class DestructionControlsLayout extends ControlsLayout {
     }
 
     layoutInTableCoords(event) {
-        if (event.target.tagName !== 'TD') {    
+        if (event.target.tagName !== 'TD') {
             return;
         }
 
@@ -75,25 +97,20 @@ export class DestructionControlsLayout extends ControlsLayout {
     }
 
     layoutInAreaCoords() {
-        this.showControls();
         const closestCell = this.getPointerClosestCell();
         if (closestCell?.tagName !== 'TD') {
             return;
         }
         this.cellUnderPointerCoords = closestCell.getBoundingClientRect();
-        this.controlDimensions = Math.max(
-            this.rowControl.calcDimensions(),
-            this.colControl.calcDimensions()
-        );
-        this.showControls();
         this.renderControls();
+        this.showControls();
     }
 
     showControls() {
         if (this.table.rowsLength > 1) {
             this.rowControl.show();
         }
-        if(this.table.colsLength > 1) {
+        if (this.table.colsLength > 1) {
             this.colControl.show();
         }
     }
