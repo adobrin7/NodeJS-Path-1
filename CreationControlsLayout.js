@@ -34,33 +34,28 @@ export class CreationControlsLayout extends ControlsLayout {
     }
 
     getPointerClosestCell() {
-        return this.getClosestRightTopCell() ?? this.getClosestLeftBottomCell();
-    }
-    
-    getClosestRightTopCell() {
-        const isPointerOnLeftOrRight = (this.pointerEvent.pageX < this.tableCoords.left) ||
-            (this.pointerEvent.pageX > this.tableCoords.right);
-        const isPointerOnTopOrBottom = (this.pointerEvent.pageY < this.tableCoords.top) ||
-            (this.pointerEvent.pageY > this.tableCoords.bottom);
-        
-        const res = document.elementFromPoint(
-            this.pointerEvent.pageX + (isPointerOnLeftOrRight ? this.tableOffset : 0),
-            this.pointerEvent.pageY + (isPointerOnTopOrBottom ? this.tableOffset : 0), 
-        );
-        return res?.tagName === 'TD' ? res : null;
-    }
-    
-    getClosestLeftBottomCell() {
-        const isPointerOnLeftOrRight = (this.pointerEvent.pageX < this.tableCoords.left) ||
-            (this.pointerEvent.pageX > this.tableCoords.right);
-        const isPointerOnTopOrBottom = (this.pointerEvent.pageY < this.tableCoords.top) ||
-            (this.pointerEvent.pageY > this.tableCoords.bottom);
-        
-        const res = document.elementFromPoint(
-            this.pointerEvent.pageX - (isPointerOnLeftOrRight ? this.tableOffset : 0),
-            this.pointerEvent.pageY - (isPointerOnTopOrBottom ? this.tableOffset : 0), 
-        );
-        return res?.tagName === 'TD' ? res : null;
+        const tableOffset = Math.abs(this.tableCoords.left - this.observeAreaCoords.left) + this.$table.clientLeft * 2;
+        const pointerTriggerRadius = [
+            [0, 0],
+            [tableOffset, 0],
+            [-tableOffset, 0],
+            [0, tableOffset],
+            [0, -tableOffset],
+            [tableOffset, tableOffset],
+            [-tableOffset, -tableOffset],
+            [-tableOffset, tableOffset],
+            [tableOffset, -tableOffset],
+        ];
+
+        let $closestCell = null;
+        for (const [x, y] of pointerTriggerRadius) {
+            const $cell = document.elementFromPoint(this.pointerEvent.pageX + x, this.pointerEvent.pageY + y);
+            if ($cell?.tagName === 'TD') {
+                $closestCell = $cell;
+                break;
+            }
+        }
+        return $closestCell;
     }
 
     layoutInTableCoords(event) {

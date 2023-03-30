@@ -32,24 +32,29 @@ export class DestructionControlsLayout extends ControlsLayout {
     }
 
     getPointerClosestCell() {
-        const tableOffset = Math.abs(this.tableCoords.left - this.observeAreaCoords.left);
-        
-        const isPointerOnLeftOrRight = (this.pointerEvent.pageX < this.tableCoords.left) ||
-            (this.pointerEvent.pageX > this.tableCoords.right);
-        const isPointerOnTopOrBottom = (this.pointerEvent.pageY < this.tableCoords.top) ||
-            (this.pointerEvent.pageY > this.tableCoords.bottom);
+        const tableOffset = Math.abs(this.tableCoords.left - this.observeAreaCoords.left) + this.$table.clientLeft * 2;
+        console.log(tableOffset);
+        const pointerTriggerRadius = [
+            [0, 0],
+            [tableOffset, 0],
+            [-tableOffset, 0],
+            [0, tableOffset],
+            [0, -tableOffset],
+            [tableOffset, tableOffset],
+            [-tableOffset, -tableOffset],
+            [-tableOffset, tableOffset],
+            [tableOffset, -tableOffset],
+        ];
 
-        const $closestCell = document.elementFromPoint(
-            this.pointerEvent.pageX + (isPointerOnLeftOrRight ? tableOffset : 0),
-            this.pointerEvent.pageY + (isPointerOnTopOrBottom ? tableOffset : 0), 
-        );
-
-        const $closestCell2 = document.elementFromPoint(
-            this.pointerEvent.pageX - (isPointerOnLeftOrRight ? tableOffset : 0),
-            this.pointerEvent.pageY - (isPointerOnTopOrBottom ? tableOffset : 0), 
-        );
-
-        return $closestCell.tagName === 'TD' ? $closestCell : $closestCell2;
+        let $closestCell = null;
+        for (const [x, y] of pointerTriggerRadius) {
+            const $cell = document.elementFromPoint(this.pointerEvent.pageX + x, this.pointerEvent.pageY + y);
+            if ($cell?.tagName === 'TD') {
+                $closestCell = $cell;
+                break;
+            }
+        }
+        return $closestCell;
     }
 
     layoutInTableCoords(event) {
@@ -68,6 +73,7 @@ export class DestructionControlsLayout extends ControlsLayout {
     }
 
     layoutInAreaCoords() {
+        this.showControls();
         const closestCell = this.getPointerClosestCell();
         if (closestCell?.tagName !== 'TD') {
             return;
