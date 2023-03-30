@@ -10,9 +10,23 @@ export class Table {
         return this.rows[0].cells.length;
     }
 
-    constructor($table) {
-        this.$table = $table;
-        this.rows = $table.rows;
+    constructor(rows, cols, $container) {
+        this.$table = document.createElement("table");
+        let $tbody = document.createElement("tbody");
+
+        for (let i = 0; i < rows; i++) {
+            let row = document.createElement("tr");
+            for (let j = 0; j < cols; j++) {
+                let cell = document.createElement("td");
+                row.appendChild(cell);
+            }
+            $tbody.appendChild(row);
+        }
+
+        this.$table.appendChild($tbody);
+        $container.appendChild(this.$table);
+
+        this.rows = this.$table.rows;
     }
 
     addRow() {
