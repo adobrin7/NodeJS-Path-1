@@ -12,22 +12,36 @@ export class TableObserver {
         this.controlsLayout = controlsLayout;
         this.observeAreaOffset = observeAreaOffset;
 
-        this.mutationObserver = new MutationObserver(() => this.onStructureChanged());
+        this.mutationObserver = new MutationObserver((event) => this.onStructureChanged(event));
         this.mutationObserver.observe(this.$table, { childList: true, subtree: true });
 
         this.calcObserveArea();
 
         document.addEventListener(
             'pointermove',
-            event => {
-                if (!this.isPointerInObserveArea(event)) {
-                    this.controlsLayout.hideControls();
-                    return;
-                }
-                this.calcObserveArea();
-                this.controlsLayout.layout(event, this.observeAreaCoords);
-            }
+            event => this.pointerEventHandler(event)
         );
+
+        document.addEventListener(
+            'pointerdown', 
+            event => setTimeout(
+                () => {
+                    if (!event.target.classList.contains('table-control'))
+                        return;
+                    this.pointerEventHandler(event);
+                }, 
+                125
+            )
+        );
+    }
+
+    pointerEventHandler(event) {
+        if (!this.isPointerInObserveArea(event)) {
+            this.controlsLayout.hideControls();
+            return;
+        }
+        this.calcObserveArea();
+        this.controlsLayout.layout(event, this.observeAreaCoords);
     }
 
     calcObserveArea() {
@@ -47,7 +61,10 @@ export class TableObserver {
             pointer.pageY < this.observeAreaCoords.bottom;
     }
 
-    onStructureChanged() {
+    onStructureChanged(mutation) {
+        if (mutation[0].addedNodes.length === 0) {
+            return;
+        }
         this.controlsLayout.hideCreationControls();
     }
 }

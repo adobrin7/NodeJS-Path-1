@@ -32,22 +32,10 @@ export class TableControlsLayout {
             this.table.$table.firstElementChild.offsetTop,
         );
 
-        document.addEventListener('controlPressed', pointerCoord => this.onControlPressed(pointerCoord));
+        document.addEventListener('controlPressed', () => this.onControlPressed());
     }
 
-    onControlPressed(pointerCoord) {
-        this.pointerEvent = {
-            pageX: pointerCoord.detail.pageX,
-            pageY: pointerCoord.detail.pageY,
-            target: pointerCoord.detail.target
-        }
-        this.observeAreaCoords = this.observeAreaCoords;
-
-        if (this.pointerEvent.target.classList.contains('add-control')) {
-            this.hideControls();
-            return;
-        }
-        this.layoutInAreaCoords();
+    onControlPressed() {
         if (this.table.rowsLength <= 1) {
             this.removeRowControl.hide();
         }
