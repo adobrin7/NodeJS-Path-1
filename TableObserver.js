@@ -21,13 +21,11 @@ export class TableObserver {
             'pointermove',
             event => {
                 if (!this.isPointerInObserveArea(event)) {
-                    this.controlsLayout.hideDestructionControls();
-                    this.controlsLayout.hideCreationControls();
+                    this.controlsLayout.hideControls();
                     return;
                 }
                 this.calcObserveArea();
-                this.controlsLayout.layoutDestructionControls(event, this.observeAreaCoords);
-                this.controlsLayout.layoutCreationControls(event, this.observeAreaCoords);
+                this.controlsLayout.layout(event, this.observeAreaCoords);
             }
         );
     }
