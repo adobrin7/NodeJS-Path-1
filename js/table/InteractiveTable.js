@@ -1,6 +1,6 @@
-import { ControlElement } from './ControlElement.js';
-import { TableControlsLayout } from './TableControlsLayout.js';
-import { TableObserver } from './TableObserver.js';
+import { ControlElement } from '../controls/ControlElement.js';
+import { TableControlsLayout } from '../controls/TableControlsLayout.js';
+import { TableObserver } from '../table/TableObserver.js';
 
 export class InteractiveTable {
     interactiveArea = null;
