@@ -11,7 +11,6 @@ export class TableControlsLayout {
 
     controlDimensions = 40; 
     pointerEvent = null;
-    observeAreaCoords = null;
     tableCoords = null;
     cellUnderPointerCoords = null;
 
@@ -63,10 +62,6 @@ export class TableControlsLayout {
 
     hideControls() {
         this.hideCreationControls();
-        this.hideDestructionControls();
-    }
-
-    hideDestructionControls() {
         this.removeRowControl.hide();
         this.removeColControl.hide();
     }
@@ -77,16 +72,8 @@ export class TableControlsLayout {
     }
 
     showControls() {
-        this.showCreationControls();
-        this.showDestructionControls();
-    }
-
-    showCreationControls() {
         this.addRowControl.show();
         this.addColControl.show();
-    }
-
-    showDestructionControls() {
         if (this.table.rowsLength > 1) {
             this.removeRowControl.show();
         }
@@ -95,9 +82,8 @@ export class TableControlsLayout {
         }
     }
 
-    layout(event, observeAreaCoords) {
+    layout(event) {
         this.pointerEvent = event;
-        this.observeAreaCoords = observeAreaCoords;
         this.tableCoords = this.table.$table.getBoundingClientRect();
 
         if (this.isPointerOnTable()) {
@@ -121,9 +107,9 @@ export class TableControlsLayout {
         }
 
         this.tableCoords = this.table.$table.getBoundingClientRect();
-        this.showControls();
         this.cellUnderPointerCoords = this.pointerEvent.target.getBoundingClientRect();
         this.layoutControls();
+        this.showControls();
     }
 
     layoutInAreaCoords() {
@@ -154,31 +140,15 @@ export class TableControlsLayout {
     }
 
     layoutCreationControls() {
-        this.layoutCreateRowControl();
-        this.layoutCreateColControl();
-    }
-
-    layoutCreateRowControl() {
         const y = this.tableCoords.bottom + this.clientOffset;
         this.addRowControl.setPosition(this.cellUnderPointerCoords.left, y);
-    }
-
-    layoutCreateColControl() {
         const x = this.tableCoords.right + this.clientOffset;
         this.addColControl.setPosition(x, this.cellUnderPointerCoords.top);
     }
 
     layoutDestructionControls() {
-        this.layoutRemoveRowControl();
-        this.layoutRemoveColControl();
-    }
-
-    layoutRemoveRowControl() {
         const x = this.tableCoords.left - (this.controlDimensions + this.clientOffset);
         this.removeRowControl.setPosition(x, this.cellUnderPointerCoords.top);
-    }
-
-    layoutRemoveColControl() {
         const y = this.tableCoords.top - (this.controlDimensions + this.clientOffset);
         this.removeColControl.setPosition(this.cellUnderPointerCoords.left, y);
     }
