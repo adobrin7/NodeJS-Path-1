@@ -3,8 +3,6 @@ import { TableControlsLayout } from '../controls/TableControlsLayout.js';
 import { TableObserver } from '../table/TableObserver.js';
 
 export class InteractiveTable {
-    interactiveArea = null;
-
     constructor(table, interactiveAreaOffset) {
         const addRowControl = new ControlElement('table-control add-control', '+', () => table.addRow());
         const removeRowControl = new ControlElement('table-control remove-control', '-', () => table.removeRow());
@@ -20,8 +18,7 @@ export class InteractiveTable {
             interactiveAreaOffset
         );
 
-        tableControlsLayout.hideDestructionControls();
-        tableControlsLayout.hideCreationControls();
+        tableControlsLayout.hideControls();
 
         new TableObserver(table.$table, tableControlsLayout, interactiveAreaOffset);
     }
