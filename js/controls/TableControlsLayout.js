@@ -3,14 +3,16 @@ export class TableControlsLayout {
     removeRowControl = null;
     addColControl = null;
     removeColControl = null;
+    tableOffset = null;
 
+    pointerTriggerRadius = null;
+    table = null;
     clientOffset = null;
 
-    controlDimensions = 40; // TODO: constructor param or getcomputdstyle
+    controlDimensions = 40; 
     pointerEvent = null;
     observeAreaCoords = null;
     tableCoords = null;
-    tableOffset = null;
     cellUnderPointerCoords = null;
 
     constructor(
@@ -19,11 +21,26 @@ export class TableControlsLayout {
         addColControl,
         removeColControl,
         table,
+        tableOffset
     ) {
         this.addRowControl = addRowControl;
         this.removeRowControl = removeRowControl;
         this.addColControl = addColControl;
         this.removeColControl = removeColControl;
+        this.tableOffset = tableOffset;
+
+        this.pointerTriggerRadius = [ 
+            { x: 0, y: 0 },
+            { x: this.tableOffset, y: 0 },
+            { x: -this.tableOffset, y: 0 },
+            { x: 0, y: this.tableOffset },
+            { x: 0, y: -this.tableOffset },
+            
+            { x: this.tableOffset, y: this.tableOffset },
+            { x: -this.tableOffset, y: -this.tableOffset },
+            { x: -this.tableOffset, y: this.tableOffset },
+            { x: this.tableOffset, y: -this.tableOffset },
+        ];
 
         this.table = table;
 
@@ -78,12 +95,10 @@ export class TableControlsLayout {
         }
     }
 
-    // TODO: calc observe area in the class
     layout(event, observeAreaCoords) {
         this.pointerEvent = event;
         this.observeAreaCoords = observeAreaCoords;
         this.tableCoords = this.table.$table.getBoundingClientRect();
-        this.tableOffset = Math.abs(this.tableCoords.left - this.observeAreaCoords.left) + this.table.$table.clientLeft * 2; // TODO: make field maybe and remove part after parentheses
 
         if (this.isPointerOnTable()) {
             this.layoutInTableCoords();
@@ -122,20 +137,8 @@ export class TableControlsLayout {
     }
 
     getPointerClosestCell() {
-        const pointerTriggerRadius = [ // TODO: make field maybe
-            { x: 0, y: 0 },
-            { x: this.tableOffset, y: 0 },
-            { x: -this.tableOffset, y: 0 },
-            { x: 0, y: this.tableOffset },
-            { x: 0, y: -this.tableOffset },
-            { x: this.tableOffset, y: this.tableOffset },
-            { x: -this.tableOffset, y: -this.tableOffset },
-            { x: -this.tableOffset, y: this.tableOffset },
-            { x: this.tableOffset, y: -this.tableOffset },
-        ];
-
         let $closestCell = null;
-        for (const { x, y } of pointerTriggerRadius) {
+        for (const { x, y } of this.pointerTriggerRadius) {
             const $cell = document.elementFromPoint(this.pointerEvent.pageX + x, this.pointerEvent.pageY + y);
             if ($cell?.tagName === 'TD') {
                 $closestCell = $cell;
@@ -156,12 +159,12 @@ export class TableControlsLayout {
     }
 
     layoutCreateRowControl() {
-        const y = this.tableCoords.bottom + this.clientOffset * 2;
+        const y = this.tableCoords.bottom + this.clientOffset;
         this.addRowControl.setPosition(this.cellUnderPointerCoords.left, y);
     }
 
     layoutCreateColControl() {
-        const x = this.tableCoords.right + this.clientOffset * 2;
+        const x = this.tableCoords.right + this.clientOffset;
         this.addColControl.setPosition(x, this.cellUnderPointerCoords.top);
     }
 

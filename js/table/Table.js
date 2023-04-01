@@ -1,4 +1,6 @@
 export class Table {
+    $container = null;
+
     $table = null;
     rows = null;
 
@@ -11,22 +13,35 @@ export class Table {
     }
 
     constructor(rows, cols, $container) {
-        this.$table = document.createElement("table");
-        let $tbody = document.createElement("tbody");
+        this.$container = $container;
+        this.generateTableToContainer(rows, cols);
+    }
 
-        for (let i = 0; i < rows; i++) {
-            let row = document.createElement("tr");
-            for (let j = 0; j < cols; j++) {
-                let cell = document.createElement("td");
-                row.appendChild(cell);
-            }
-            $tbody.appendChild(row);
-        }
+    generateTableToContainer(rows, cols) {
+        this.$table = document.createElement("table");
+        const $tbody = document.createElement("tbody");
+
+        this.fillTableBody($tbody, rows, cols);
 
         this.$table.appendChild($tbody);
-        $container.appendChild(this.$table);
+        this.$container.appendChild(this.$table);
 
         this.rows = this.$table.rows;
+    }
+
+    fillTableBody($tbody, rows, cols) {
+        for (let i = 0; i < rows; i++) {
+            const $row = document.createElement("tr");
+            this.fillTableRow($row, cols);
+            $tbody.appendChild($row);
+        }
+    }
+
+    fillTableRow($row, cols) {
+        for (let j = 0; j < cols; j++) {
+            const $cell = document.createElement("td");
+            $row.appendChild($cell);
+        }
     }
 
     addRow() {
