@@ -12,7 +12,7 @@ export class TableObserver {
         this.controlsLayout = controlsLayout;
         this.observeAreaOffset = observeAreaOffset;
 
-        this.mutationObserver = new MutationObserver((event) => this.onStructureChanged(event));
+        this.mutationObserver = new MutationObserver(event => this.onStructureChanged(event));
         this.mutationObserver.observe(this.$table, { childList: true, subtree: true });
 
         this.calcObserveArea();
@@ -37,8 +37,7 @@ export class TableObserver {
             this.controlsLayout.hideControls();
             return;
         }
-        this.calcObserveArea();
-        this.controlsLayout.layout(event, this.observeAreaCoords);
+        this.controlsLayout.layout(event);
     }
 
     calcObserveArea() {
@@ -59,6 +58,7 @@ export class TableObserver {
     }
 
     onStructureChanged(mutation) {
+        this.calcObserveArea();
         if (mutation[0].addedNodes.length === 0) {
             return;
         }
