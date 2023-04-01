@@ -1,5 +1,6 @@
 export class ControlElement {
     $control = null;
+    isMooving = false;
 
     constructor(className, content, action) {
         this.$control = document.createElement('div');
@@ -8,7 +9,12 @@ export class ControlElement {
         this.$control.style.position = 'absolute';
         this.$control.innerText = content;
         this.$control.addEventListener('pointerdown', e => e.preventDefault());
+        this.$control.addEventListener('transitionstart', () => this.isMooving = true);
+        this.$control.addEventListener('transitionend', () => this.isMooving = false);
         this.$control.addEventListener('pointerup', () => {
+            if (this.isMooving) {
+                return;
+            }
             action();
             document.dispatchEvent(new CustomEvent('controlPressed'));
         });

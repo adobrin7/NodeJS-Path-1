@@ -23,15 +23,12 @@ export class TableObserver {
         );
 
         document.addEventListener(
-            'pointerdown', 
-            event => setTimeout(
-                () => {
-                    if (!event.target.classList.contains('table-control'))
-                        return;
-                    this.pointerEventHandler(event);
-                }, 
-                125
-            )
+            'pointerup',
+            event => {
+                if (!event.target.classList.contains('table-control'))
+                    return;
+                this.pointerEventHandler(event);
+            }
         );
     }
 
