@@ -1,10 +1,13 @@
 export class ControlElement {
-    constructor(className, content, action) {
-        this.isMooving = false;
+    private readonly control: HTMLElement;
+    private isMooving = false;
+
+    constructor(className: string, content: string, action: () => void) {
         this.control = document.createElement('div');
         this.control.className = className;
         this.control.style.position = 'absolute';
         this.control.innerText = content;
+
         this.control.addEventListener('pointerdown', e => e.preventDefault());
         this.control.addEventListener('transitionstart', () => this.isMooving = true);
         this.control.addEventListener('transitionend', () => this.isMooving = false);
@@ -17,17 +20,21 @@ export class ControlElement {
         });
         document.body.append(this.control);
     }
-    hide() {
+
+    public hide(): void {
         this.control.hidden = true;
     }
-    show() {
+
+    public show(): void {
         this.control.hidden = false;
     }
-    setPosition(pageX, pageY) {
+
+    public setPosition(pageX: number, pageY: number): void {
         this.control.style.top = `${pageY}px`;
         this.control.style.left = `${pageX}px`;
     }
-    calcDimensions() {
+
+    public calcDimensions(): number {
         return Math.max(this.control.offsetWidth, this.control.offsetHeight);
     }
 }

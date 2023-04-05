@@ -1,35 +1,46 @@
 import { TableBuilder } from "./TableBuilder.js";
+
 export class Table {
-    get rowsLength() {
+    private rowsCount: number;
+    private colsCount: number;
+    private readonly table: HTMLTableElement;
+
+    get rowsLength(): number {
         return this.rowsCount;
     }
-    get colsLength() {
+
+    get colsLength(): number {
         return this.colsCount;
     }
-    get tableElement() {
+
+    get tableElement(): HTMLTableElement {
         return this.table;
     }
-    constructor(container, rowsCount = 0, colsCount = 0) {
+
+    constructor(container: HTMLElement, rowsCount: number = 0, colsCount: number = 0) {
         this.rowsCount = rowsCount;
         this.colsCount = colsCount;
         this.table = TableBuilder.create(rowsCount, colsCount);
         container.appendChild(this.table);
     }
-    addRow() {
+
+    public addRow(): void {
         const lastRowIdx = this.table.rows.length - 1;
         const lastRow = this.table.rows[lastRowIdx];
         const lastRowCopy = lastRow.cloneNode(true);
         lastRow.after(lastRowCopy);
         this.rowsCount++;
     }
-    removeRow() {
+
+    public removeRow(): void {
         if (this.table.rows.length <= 1)
             return;
         const firstRow = this.table.rows[0];
         firstRow.remove();
         this.rowsCount--;
     }
-    addCol() {
+
+    public addCol(): void {
         for (const row of this.table.rows) {
             const lastCellIdx = row.cells.length - 1;
             const lastCell = row.cells[lastCellIdx];
@@ -38,7 +49,8 @@ export class Table {
         }
         this.colsCount++;
     }
-    removeCol() {
+
+    public removeCol(): void {
         for (const row of this.table.rows) {
             if (row.cells.length <= 1)
                 return;
