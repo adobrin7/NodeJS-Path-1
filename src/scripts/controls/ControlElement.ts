@@ -37,4 +37,12 @@ export class ControlElement {
     public calcDimensions(): number {
         return Math.max(this.control.offsetWidth, this.control.offsetHeight);
     }
+
+    public shiftRight(): void {        
+        this.control.style.left = `${parseFloat(this.control.style.left) + 42}px`;
+    }
+
+    public shiftBottom(): void {
+        this.control.style.top = `${parseFloat(this.control.style.top) + 42}px`;
+    }
 }

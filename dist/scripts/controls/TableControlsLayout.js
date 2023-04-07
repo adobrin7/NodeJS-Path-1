@@ -20,6 +20,7 @@ export class TableControlsLayout {
         ];
         this.table = table;
         document.addEventListener('controlPressed', () => this.onControlPressed());
+        document.addEventListener('TableChanged', (e) => this.onTableChanged(e));
     }
     onControlPressed() {
         if (this.table.rowsLength <= 1) {
@@ -27,6 +28,18 @@ export class TableControlsLayout {
         }
         if (this.table.colsLength <= 1) {
             this.removeColControl.hide();
+        }
+    }
+    onTableChanged(e) {
+        if (e.detail.isHorizontal) {
+            this.addColControl.shiftRight();
+            this.addRowControl.shiftRight();
+            this.removeColControl.shiftRight();
+        }
+        else {
+            this.addRowControl.shiftBottom();
+            this.addColControl.shiftBottom();
+            this.removeRowControl.shiftBottom();
         }
     }
     hideControls() {

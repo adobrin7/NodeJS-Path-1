@@ -30,4 +30,10 @@ export class ControlElement {
     calcDimensions() {
         return Math.max(this.control.offsetWidth, this.control.offsetHeight);
     }
+    shiftRight() {
+        this.control.style.left = `${parseFloat(this.control.style.left) + 42}px`;
+    }
+    shiftBottom() {
+        this.control.style.top = `${parseFloat(this.control.style.top) + 42}px`;
+    }
 }
