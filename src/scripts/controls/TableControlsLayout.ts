@@ -2,9 +2,9 @@ import { Table } from "../table/Table.js";
 import { ControlElement } from "./ControlElement.js";
 
 export class TableControlsLayout {
-    private readonly addRowControl: ControlElement;
+    public readonly addRowControl: ControlElement;
     private readonly removeRowControl: ControlElement;
-    private readonly addColControl: ControlElement;
+    public readonly addColControl: ControlElement;
     private readonly removeColControl: ControlElement;
 
     private readonly table: Table;
@@ -48,6 +48,7 @@ export class TableControlsLayout {
         this.table = table;
 
         document.addEventListener('controlPressed', () => this.onControlPressed());
+        document.addEventListener('TableChanged', (e) => this.onTableChanged(e));
     }
 
     private onControlPressed(): void {
@@ -56,6 +57,19 @@ export class TableControlsLayout {
         }
         if (this.table.colsLength <= 1) {
             this.removeColControl.hide();
+        }
+    }
+
+    private onTableChanged(e: any): void {
+        if (e.detail.isHorizontal) {            
+            this.addColControl.shiftRight();
+            this.addRowControl.shiftRight();
+            this.removeColControl.shiftRight();
+            
+        } else {
+            this.addRowControl.shiftBottom();
+            this.addColControl.shiftBottom();
+            this.removeRowControl.shiftBottom();
         }
     }
 

@@ -60,11 +60,11 @@ export class TableObserver {
             pointer.pageY < this.observeAreaCoords!.bottom;
     }
 
-    onStructureChanged(mutation: MutationRecord[]) {
+    onStructureChanged(mutation: MutationRecord[]) {        
         this.calcObserveArea();
         if (mutation[0].addedNodes.length === 0) {
             return;
         }
-        this.controlsLayout.hideCreationControls();
+        document.dispatchEvent(new CustomEvent('TableChanged', { detail: { isHorizontal: mutation.length > 1 }}));
     }
 }
