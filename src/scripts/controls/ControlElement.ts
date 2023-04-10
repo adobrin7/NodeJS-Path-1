@@ -16,7 +16,6 @@ export class ControlElement {
                 return;
             }
             action();
-            document.dispatchEvent(new CustomEvent('controlPressed'));
         });
         document.body.append(this.control);
     }

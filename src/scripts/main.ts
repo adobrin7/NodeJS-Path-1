@@ -2,4 +2,4 @@ import { Table } from './table/Table.js';
 import { InteractiveTable } from './table/InteractiveTable.js';
 
 const table = new Table(document.querySelector('.table-wrapper') as HTMLElement, 4, 4);
-new InteractiveTable(table, 40);
+new InteractiveTable(table);

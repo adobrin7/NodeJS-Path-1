@@ -1,24 +1,22 @@
-import { TableControlsLayout } from "../controls/TableControlsLayout.js";
+import { ControlsLayout } from "../controls/ControlsLayout.js";
+import { TablePointer } from "./TablePointer.js";
 
 export class TableObserver {
     private readonly table: HTMLTableElement;
-    private readonly controlsLayout: TableControlsLayout;
-    private readonly observeAreaOffset: number;
-
+    private readonly controlsLayout: ControlsLayout;
     private readonly mutationObserver: MutationObserver;
 
-    private observeAreaCoords?: { top: number, left: number, right: number, bottom: number };
-
-    constructor(table: HTMLTableElement, controlsLayout: TableControlsLayout, observeAreaOffset: number) {
+    constructor(table: HTMLTableElement, controlsLayout: ControlsLayout) {
         this.table = table;
         this.controlsLayout = controlsLayout;
-        this.observeAreaOffset = observeAreaOffset;
 
         this.mutationObserver = new MutationObserver(event => this.onStructureChanged(event));
         this.mutationObserver.observe(this.table, { childList: true, subtree: true });
 
-        this.calcObserveArea();
+        this.addListeners();
+    }
 
+    private addListeners(): void {
         document.addEventListener(
             'pointermove',
             event => this.pointerEventHandler(event)
@@ -36,35 +34,25 @@ export class TableObserver {
     }
 
     private pointerEventHandler(event: PointerEvent): void {
-        if (!this.isPointerInObserveArea(event)) {
+        const tablePointer = new TablePointer(this.table, event);
+        if (!tablePointer.isInObserveArea()) {
             this.controlsLayout.hideControls();
             return;
         }
-        this.controlsLayout.layout(event);
+        this.controlsLayout.layout(tablePointer);
     }
 
-    private calcObserveArea(): void {
-        const tableCoords = this.table.getBoundingClientRect();
-        this.observeAreaCoords = {
-            top: tableCoords.top - this.observeAreaOffset,
-            left: tableCoords.left - this.observeAreaOffset,
-            right: tableCoords.right + this.observeAreaOffset,
-            bottom: tableCoords.bottom + this.observeAreaOffset,
-        };
-    }
-
-    isPointerInObserveArea(pointer: PointerEvent): boolean {
-        return pointer.pageX > this.observeAreaCoords!.left &&
-            pointer.pageX < this.observeAreaCoords!.right &&
-            pointer.pageY > this.observeAreaCoords!.top &&
-            pointer.pageY < this.observeAreaCoords!.bottom;
-    }
-
-    onStructureChanged(mutation: MutationRecord[]) {        
-        this.calcObserveArea();
-        if (mutation[0].addedNodes.length === 0) {
-            return;
-        }
-        document.dispatchEvent(new CustomEvent('TableChanged', { detail: { isHorizontal: mutation.length > 1 }}));
+    onStructureChanged(mutation: MutationRecord[]): void {
+        this.controlsLayout.showControls();
+        document.dispatchEvent(
+            new CustomEvent(
+                'tableChanged', 
+                { 
+                    detail: { 
+                    isHorizontal: mutation.some(record => record.addedNodes[0]?.nodeName === 'TD'), 
+                    isDestruction: mutation.some(record => record.addedNodes.length === 0)
+                }
+            })
+        );
     }
 }

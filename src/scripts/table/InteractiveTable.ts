@@ -1,26 +1,25 @@
 import { ControlElement } from '../controls/ControlElement.js';
-import { TableControlsLayout } from '../controls/TableControlsLayout.js';
+import { ControlsLayout } from '../controls/ControlsLayout.js';
 import { Table } from './Table.js';
 import { TableObserver } from './TableObserver.js';
 
 export class InteractiveTable {
-    constructor(table: Table, interactiveAreaOffset: number) {
+    constructor(table: Table) {
         const addRowControl = new ControlElement('table-control add-control', '+', () => table.addRow());
         const removeRowControl = new ControlElement('table-control remove-control', '-', () => table.removeRow());
         const addColControl = new ControlElement('table-control add-control', '+', () => table.addCol());
         const removeColControl = new ControlElement('table-control remove-control', '-', () => table.removeCol());
 
-        const tableControlsLayout = new TableControlsLayout(
+        const tableControlsLayout = new ControlsLayout(
             addRowControl,
             removeRowControl,
             addColControl,
             removeColControl,
-            table,
-            interactiveAreaOffset
+            table
         );
 
         tableControlsLayout.hideControls();
 
-        new TableObserver(table.tableElement, tableControlsLayout, interactiveAreaOffset);
+        new TableObserver(table.tableElement, tableControlsLayout);
     }
 }

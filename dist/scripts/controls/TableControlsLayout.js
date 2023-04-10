@@ -1,4 +1,8 @@
-export class TableControlsLayout {
+// TODO: Переименовать класс в ControlsLayout, 
+// убрать аргумент из метода layout (вместо этого подписываться на событие движения указателя в конструкторе)
+// вынести методы layout in table coordinates и layout in area coordinates в отдельный класс (по принципу данных и методов)
+// this.tableCoords считать единожды (есть дубликаты), а this.cellUnderPointer получать из отдельного класса
+export class ControlsLayout {
     constructor(addRowControl, removeRowControl, addColControl, removeColControl, table, tableOffset) {
         this.clientOffset = 2;
         this.controlDimensions = 40;
@@ -81,7 +85,6 @@ export class TableControlsLayout {
         if (target.tagName !== 'TD') {
             return;
         }
-        this.tableCoords = this.table.tableElement.getBoundingClientRect();
         this.cellUnderPointerCoords = target.getBoundingClientRect();
         this.layoutControls();
         this.showControls();

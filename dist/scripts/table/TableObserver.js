@@ -1,11 +1,13 @@
+import { TablePointer } from "./TablePointer.js";
 export class TableObserver {
-    constructor(table, controlsLayout, observeAreaOffset) {
+    constructor(table, controlsLayout) {
         this.table = table;
         this.controlsLayout = controlsLayout;
-        this.observeAreaOffset = observeAreaOffset;
         this.mutationObserver = new MutationObserver(event => this.onStructureChanged(event));
         this.mutationObserver.observe(this.table, { childList: true, subtree: true });
-        this.calcObserveArea();
+        this.addListeners();
+    }
+    addListeners() {
         document.addEventListener('pointermove', event => this.pointerEventHandler(event));
         document.addEventListener('pointerup', event => {
             const target = event.target;
@@ -15,32 +17,20 @@ export class TableObserver {
         });
     }
     pointerEventHandler(event) {
-        if (!this.isPointerInObserveArea(event)) {
+        const tablePointer = new TablePointer(this.table, event);
+        if (!tablePointer.isInObserveArea()) {
             this.controlsLayout.hideControls();
             return;
         }
-        this.controlsLayout.layout(event);
-    }
-    calcObserveArea() {
-        const tableCoords = this.table.getBoundingClientRect();
-        this.observeAreaCoords = {
-            top: tableCoords.top - this.observeAreaOffset,
-            left: tableCoords.left - this.observeAreaOffset,
-            right: tableCoords.right + this.observeAreaOffset,
-            bottom: tableCoords.bottom + this.observeAreaOffset,
-        };
-    }
-    isPointerInObserveArea(pointer) {
-        return pointer.pageX > this.observeAreaCoords.left &&
-            pointer.pageX < this.observeAreaCoords.right &&
-            pointer.pageY > this.observeAreaCoords.top &&
-            pointer.pageY < this.observeAreaCoords.bottom;
+        this.controlsLayout.layout(tablePointer);
     }
     onStructureChanged(mutation) {
-        this.calcObserveArea();
-        if (mutation[0].addedNodes.length === 0) {
-            return;
-        }
-        document.dispatchEvent(new CustomEvent('TableChanged', { detail: { isHorizontal: mutation.length > 1 } }));
+        this.controlsLayout.showControls();
+        document.dispatchEvent(new CustomEvent('tableChanged', {
+            detail: {
+                isHorizontal: mutation.some(record => { var _a; return ((_a = record.addedNodes[0]) === null || _a === void 0 ? void 0 : _a.nodeName) === 'TD'; }),
+                isDestruction: mutation.some(record => record.addedNodes.length === 0)
+            }
+        }));
     }
 }
