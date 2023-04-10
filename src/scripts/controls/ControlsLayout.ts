@@ -1,3 +1,4 @@
+import { TableEvents } from "../enums/TableEvents.js";
 import { Table } from "../table/Table.js";
 import { TablePointer } from "../table/TablePointer.js";
 import { ControlElement } from "./ControlElement.js";
@@ -33,7 +34,7 @@ export class ControlsLayout {
 
     private addListeners(): void {
         document.addEventListener(
-            'tableChanged', 
+            TableEvents.TABLE_CHANGED, 
             (event) => this.onTableChanged(event as CustomEvent<{isHorizontal: boolean, isDestruction: boolean}>)
         );
     }

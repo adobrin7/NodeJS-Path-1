@@ -1,3 +1,5 @@
+import { TableEvents } from "../enums/TableEvents.js";
+import { ControlEvents } from "../enums/ControlEvents.js";
 export class ControlElement {
     constructor(className, content, action) {
         this.isMooving = false;
@@ -5,10 +7,10 @@ export class ControlElement {
         this.control.className = className;
         this.control.style.position = 'absolute';
         this.control.innerText = content;
-        this.control.addEventListener('pointerdown', e => e.preventDefault());
-        this.control.addEventListener('transitionstart', () => this.isMooving = true);
-        this.control.addEventListener('transitionend', () => this.isMooving = false);
-        this.control.addEventListener('pointerup', () => {
+        this.control.addEventListener(ControlEvents.POINTER_DOWN, e => e.preventDefault());
+        this.control.addEventListener(ControlEvents.TRANSITION_START, () => this.isMooving = true);
+        this.control.addEventListener(ControlEvents.TRANSITION_END, () => this.isMooving = false);
+        this.control.addEventListener(TableEvents.POINTER_UP, () => {
             if (this.isMooving) {
                 return;
             }

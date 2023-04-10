@@ -1,4 +1,6 @@
 import { TablePointer } from "./TablePointer.js";
+import { TableEvents } from "../enums/TableEvents.js";
+import { ObservedElementTags } from "../enums/ObservedElementTags.js";
 export class TableObserver {
     constructor(table, controlsLayout) {
         this.table = table;
@@ -8,8 +10,8 @@ export class TableObserver {
         this.addListeners();
     }
     addListeners() {
-        document.addEventListener('pointermove', event => this.pointerEventHandler(event));
-        document.addEventListener('pointerup', event => {
+        document.addEventListener(TableEvents.POINTER_MOVE, event => this.pointerEventHandler(event));
+        document.addEventListener(TableEvents.POINTER_UP, event => {
             const target = event.target;
             if (!target.classList.contains('table-control'))
                 return;
@@ -26,9 +28,9 @@ export class TableObserver {
     }
     onStructureChanged(mutation) {
         this.controlsLayout.showControls();
-        document.dispatchEvent(new CustomEvent('tableChanged', {
+        document.dispatchEvent(new CustomEvent(TableEvents.TABLE_CHANGED, {
             detail: {
-                isHorizontal: mutation.some(record => { var _a; return ((_a = record.addedNodes[0]) === null || _a === void 0 ? void 0 : _a.nodeName) === 'TD'; }),
+                isHorizontal: mutation.some(record => { var _a; return ((_a = record.addedNodes[0]) === null || _a === void 0 ? void 0 : _a.nodeName) === ObservedElementTags.TD; }),
                 isDestruction: mutation.some(record => record.addedNodes.length === 0)
             }
         }));

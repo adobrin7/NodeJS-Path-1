@@ -1,5 +1,7 @@
 import { ControlsLayout } from "../controls/ControlsLayout.js";
 import { TablePointer } from "./TablePointer.js";
+import { TableEvents } from "../enums/TableEvents.js";
+import { ObservedElementTags } from "../enums/ObservedElementTags.js";
 
 export class TableObserver {
     private readonly table: HTMLTableElement;
@@ -18,12 +20,12 @@ export class TableObserver {
 
     private addListeners(): void {
         document.addEventListener(
-            'pointermove',
+            TableEvents.POINTER_MOVE,
             event => this.pointerEventHandler(event)
         );
 
         document.addEventListener(
-            'pointerup',
+            TableEvents.POINTER_UP,
             event => {
                 const target = event.target as HTMLElement;
                 if (!target.classList.contains('table-control'))
@@ -46,10 +48,10 @@ export class TableObserver {
         this.controlsLayout.showControls();
         document.dispatchEvent(
             new CustomEvent(
-                'tableChanged', 
+                TableEvents.TABLE_CHANGED, 
                 { 
                     detail: { 
-                    isHorizontal: mutation.some(record => record.addedNodes[0]?.nodeName === 'TD'), 
+                    isHorizontal: mutation.some(record => record.addedNodes[0]?.nodeName === ObservedElementTags.TD), 
                     isDestruction: mutation.some(record => record.addedNodes.length === 0)
                 }
             })

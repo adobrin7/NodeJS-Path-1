@@ -1,3 +1,4 @@
+import { TableEvents } from "../enums/TableEvents.js";
 export class ControlsLayout {
     constructor(addRowControl, removeRowControl, addColControl, removeColControl, table) {
         this.controlDimensions = 40;
@@ -10,7 +11,7 @@ export class ControlsLayout {
         this.addListeners();
     }
     addListeners() {
-        document.addEventListener('tableChanged', (event) => this.onTableChanged(event));
+        document.addEventListener(TableEvents.TABLE_CHANGED, (event) => this.onTableChanged(event));
     }
     onTableChanged(event) {
         if (event.detail.isDestruction) {

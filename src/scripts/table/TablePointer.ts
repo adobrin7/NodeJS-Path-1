@@ -1,9 +1,11 @@
+import { ObservedElementTags } from "../enums/ObservedElementTags.js";
+
 export class TablePointer {
     private readonly table: HTMLTableElement;
     private readonly pointer: PointerEvent;
     private readonly observedAreaOffset: number = 40;
     private readonly extendedSearchCoords: { x: number, y: number }[];
-    private readonly observedAreaCoords: { top: number, left: number, right: number, bottom: number };
+    private readonly observedAreaCoords: { top: number, left: number, right: number, bottom: number }[];
 
     constructor(table: HTMLTableElement, pointer: PointerEvent) {
         this.table = table;
@@ -15,23 +17,26 @@ export class TablePointer {
             { x: -this.observedAreaOffset, y: 0 },
             { x: 0, y: this.observedAreaOffset },
             { x: 0, y: -this.observedAreaOffset },
-            
-            { x: this.observedAreaOffset, y: this.observedAreaOffset },
-            { x: -this.observedAreaOffset, y: -this.observedAreaOffset },
-            { x: -this.observedAreaOffset, y: this.observedAreaOffset },
-            { x: this.observedAreaOffset, y: -this.observedAreaOffset },
         ];
 
         const tableCoords = this.table.getBoundingClientRect();
-        this.observedAreaCoords = {
-            top: tableCoords.top - this.observedAreaOffset,
-            left: tableCoords.left - this.observedAreaOffset,
-            right: tableCoords.right + this.observedAreaOffset,
-            bottom: tableCoords.bottom + this.observedAreaOffset,
-        };
+        this.observedAreaCoords = [
+            {
+                top: tableCoords.top - this.observedAreaOffset,
+                left: tableCoords.left,
+                right: tableCoords.right,
+                bottom: tableCoords.bottom + this.observedAreaOffset,
+            },
+            {
+                top: tableCoords.top,
+                left: tableCoords.left - this.observedAreaOffset,
+                right: tableCoords.right + this.observedAreaOffset,
+                bottom: tableCoords.bottom,
+            }
+        ];
     }
 
-    public findClosestCell(): HTMLTableCellElement | null {
+    public findClosestCell(): HTMLTableCellElement | void {
         if (this.isOnTable()) {
             return this.searchCellInTableArea();
         }
@@ -46,40 +51,39 @@ export class TablePointer {
             this.pointer.pageY < tableCoords.bottom;
     }
 
-    private searchCellInTableArea(): HTMLTableCellElement | null {
+    private searchCellInTableArea(): HTMLTableCellElement | void {
         const target = this.pointer.target as HTMLTableCellElement;
-        if (target.tagName !== 'TD') {
-            return null;
-        }
-        return target;
+        if (target.tagName == ObservedElementTags.TD) {
+            return target;
+        }        
     }
 
-    private searchCellOutTableArea(): HTMLTableCellElement | null {
+    private searchCellOutTableArea(): HTMLTableCellElement | void {
         const closestCell = this.searchClosestCell();
-        if (closestCell?.tagName !== 'TD') {
-            return null;
+        if (closestCell?.tagName == ObservedElementTags.TD) {
+            return closestCell;
         }
-        return closestCell;
     }
 
-    private searchClosestCell(): HTMLTableCellElement | null {
+    private searchClosestCell(): HTMLTableCellElement | void {
         for (const { x, y } of this.extendedSearchCoords) {
             const cell = document.elementFromPoint(
                 this.pointer.pageX + x, 
                 this.pointer.pageY + y
             );
-            if (cell?.tagName === 'TD') {
+            if (cell?.tagName === ObservedElementTags.TD) {
                 return cell as HTMLTableCellElement;
             }
         }
-        return null;
     }
 
     public isInObserveArea(): boolean {
-        return this.pointer.pageX > this.observedAreaCoords.left &&
-            this.pointer.pageX < this.observedAreaCoords.right &&
-            this.pointer.pageY > this.observedAreaCoords.top &&
-            this.pointer.pageY < this.observedAreaCoords.bottom;
+        return this.observedAreaCoords.some(coord => {
+            return this.pointer.pageX > coord.left &&
+            this.pointer.pageX < coord.right &&
+            this.pointer.pageY > coord.top &&
+            this.pointer.pageY < coord.bottom;
+        });
     }
 }
 
